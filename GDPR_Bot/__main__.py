@@ -43,7 +43,7 @@ def main():
         log_info(orchestrator_connection, "Skipping: Delete queue elements")
 
     # Delete queue references
-    days = args.get("Anon_Queue_Reference", 0)
+    days = args.get("Delete_Queue_References", 0)
     if days > 0:
         with Session(engine) as session:
             anon_queue_reference(days, session, orchestrator_connection)
@@ -51,7 +51,7 @@ def main():
         log_info(orchestrator_connection, "Skipping: Delete queue element references")
 
     # Delete queue data
-    days = args.get("Anon_Queue_Data", 0)
+    days = args.get("Delete_Queue_Data", 0)
     if days > 0:
         with Session(engine) as session:
             anon_queue_data(days, session, orchestrator_connection)
@@ -59,7 +59,7 @@ def main():
         log_info(orchestrator_connection, "Skipping: Delete queue element data")
 
     # Delete queue messages
-    days = args.get("Anon_Queue_Message", 0)
+    days = args.get("Delete_Queue_Messages", 0)
     if days > 0:
         with Session(engine) as session:
             anon_queue_message(days, session, orchestrator_connection)
@@ -79,7 +79,7 @@ def delete_logs(days: int, session: Session, orchestrator_connection: Orchestrat
     """
     cutoff_date = datetime.today() - timedelta(days=days)
 
-    log_info(orchestrator_connection, f"Deleting logs before: {cutoff_date.date()}")
+    log_info(orchestrator_connection, f"Deleting logs before: {cutoff_date.date()} ({days} days)")
 
     query = (
         select(Log)
@@ -106,7 +106,7 @@ def delete_queue_elements(days: int, session: Session, orchestrator_connection: 
     """
     cutoff_date = datetime.today() - timedelta(days=days)
 
-    log_info(orchestrator_connection, f"Deleting queue elements before: {cutoff_date.date()}")
+    log_info(orchestrator_connection, f"Deleting queue elements before: {cutoff_date.date()} ({days} days)")
 
     query = (
         select(QueueElement)
@@ -133,7 +133,7 @@ def anon_queue_reference(days: int, session: Session, orchestrator_connection: O
     """
     cutoff_date = datetime.today() - timedelta(days=days)
 
-    log_info(orchestrator_connection, f"Deleting queue references before: {cutoff_date.date()}")
+    log_info(orchestrator_connection, f"Deleting queue references before: {cutoff_date.date()} ({days} days)")
 
     query = (
         select(QueueElement)
@@ -164,7 +164,7 @@ def anon_queue_data(days: int, session: Session, orchestrator_connection: Orches
     """
     cutoff_date = datetime.today() - timedelta(days=days)
 
-    log_info(orchestrator_connection, f"Deleting queue data before: {cutoff_date.date()}")
+    log_info(orchestrator_connection, f"Deleting queue data before: {cutoff_date.date()} ({days} days)")
 
     query = (
         select(QueueElement)
@@ -195,7 +195,7 @@ def anon_queue_message(days: int, session: Session, orchestrator_connection: Orc
     """
     cutoff_date = datetime.today() - timedelta(days=days)
 
-    log_info(orchestrator_connection, f"Deleting queue messages before: {cutoff_date.date()}")
+    log_info(orchestrator_connection, f"Deleting queue messages before: {cutoff_date.date()} ({days} days)")
 
     query = (
         select(QueueElement)

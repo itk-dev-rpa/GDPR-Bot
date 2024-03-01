@@ -11,11 +11,11 @@ delete it as needed.
 
 The robot takes the following arguments as input in a JSON string:
 
-- **Delete_Logs**: The maximum age of logs before they're.
-- **Delete_Queues**: The maximum age of queue elements they're deleted.
-- **Anon_Queue_Reference**: The maximum age of queue elements before their reference is deleted.
-- **Anon_Queue_Data**: The maximum age of queue elements before their data is deleted.
-- **Anon_Queue_Message**: The maximum age of queue elements before their message is deleted.
+- **Delete_Logs**: The maximum age of logs before they're deleted.
+- **Delete_Queues**: The maximum age of queue elements before they're deleted.
+- **Delete_Queue_References**: The maximum age of queue elements before their reference is deleted.
+- **Delete_Queue_Data**: The maximum age of queue elements before their data is deleted.
+- **Delete_Queue_Messages**: The maximum age of queue elements before their message is deleted.
 
 All values are given in days.
 If a value is not defined or less than 1 the action is skipped.
@@ -28,8 +28,8 @@ Example JSON:
 {
     "Delete_Logs": 30,
     "Delete_Queues": 60,
-    "Anon_Queue_Reference": 14,
-    "Anon_Queue_Data": 14,
-    "Anon_Queue_Message": 45
+    "Delete_Queue_References": 14,
+    "Delete_Queue_Data": 14,
+    "Delete_Queue_Messages": 45
 }
 ```

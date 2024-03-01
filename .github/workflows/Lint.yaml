@@ -25,7 +25,7 @@ jobs:
 
     - name: Analysing the code with pylint
       run: |
-        pylint --rcfile=.pylintrc $(git ls-files '*.py')
+        pylint --rcfile=.pylintrc $(git ls-files '*.py') --good-names=GDPR_Bot
 
     - name: Analysing the code with flake8
       run: |

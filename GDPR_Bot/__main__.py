@@ -8,7 +8,7 @@ from OpenOrchestrator.orchestrator_connection.connection import OrchestratorConn
 from OpenOrchestrator.database import db_util
 from OpenOrchestrator.database.logs import Log
 from OpenOrchestrator.database.queues import QueueElement
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, delete, update
 from sqlalchemy.orm import Session
 
 
@@ -82,18 +82,13 @@ def delete_logs(days: int, session: Session, orchestrator_connection: Orchestrat
     log_info(orchestrator_connection, f"Deleting logs before: {cutoff_date.date()} ({days} days)")
 
     query = (
-        select(Log)
+        delete(Log)
         .where(Log.log_time < cutoff_date)
     )
-
-    logs = tuple(session.scalars(query))
-
-    for log in logs:
-        session.delete(log)
-
+    count = session.execute(query).rowcount
     session.commit()
 
-    log_info(orchestrator_connection, f"Logs deleted: {len(logs)}")
+    log_info(orchestrator_connection, f"Logs deleted: {count}")
 
 
 def delete_queue_elements(days: int, session: Session, orchestrator_connection: OrchestratorConnection):
@@ -109,18 +104,14 @@ def delete_queue_elements(days: int, session: Session, orchestrator_connection: 
     log_info(orchestrator_connection, f"Deleting queue elements before: {cutoff_date.date()} ({days} days)")
 
     query = (
-        select(QueueElement)
+        delete(QueueElement)
         .where(QueueElement.created_date < cutoff_date)
     )
 
-    queue_elements = tuple(session.scalars(query))
-
-    for queue_element in queue_elements:
-        session.delete(queue_element)
-
+    count = session.execute(query).rowcount
     session.commit()
 
-    log_info(orchestrator_connection, f"Queue elements deleted: {len(queue_elements)}")
+    log_info(orchestrator_connection, f"Queue elements deleted: {count}")
 
 
 def anon_queue_reference(days: int, session: Session, orchestrator_connection: OrchestratorConnection):
@@ -136,19 +127,12 @@ def anon_queue_reference(days: int, session: Session, orchestrator_connection: O
     log_info(orchestrator_connection, f"Deleting queue references before: {cutoff_date.date()} ({days} days)")
 
     query = (
-        select(QueueElement)
+        update(QueueElement)
         .where(QueueElement.created_date < cutoff_date)
+        .values(reference=None)
     )
 
-    queue_elements = session.scalars(query)
-
-    count = 0
-
-    for queue_element in queue_elements:
-        if queue_element.reference:
-            queue_element.reference = None
-            count += 1
-
+    count = session.execute(query).rowcount
     session.commit()
 
     log_info(orchestrator_connection, f"Queue references deleted: {count}")
@@ -167,19 +151,12 @@ def anon_queue_data(days: int, session: Session, orchestrator_connection: Orches
     log_info(orchestrator_connection, f"Deleting queue data before: {cutoff_date.date()} ({days} days)")
 
     query = (
-        select(QueueElement)
+        update(QueueElement)
         .where(QueueElement.created_date < cutoff_date)
+        .values(data=None)
     )
 
-    queue_elements = session.scalars(query)
-
-    count = 0
-
-    for queue_element in queue_elements:
-        if queue_element.data:
-            queue_element.data = None
-            count += 1
-
+    count = session.execute(query).rowcount
     session.commit()
 
     log_info(orchestrator_connection, f"Queue data deleted: {count}")
@@ -198,18 +175,13 @@ def anon_queue_message(days: int, session: Session, orchestrator_connection: Orc
     log_info(orchestrator_connection, f"Deleting queue messages before: {cutoff_date.date()} ({days} days)")
 
     query = (
-        select(QueueElement)
+        update(QueueElement)
         .where(QueueElement.created_date < cutoff_date)
+        .values(message=None)
     )
 
-    queue_elements = session.scalars(query)
-
-    count = 0
-
-    for queue_element in queue_elements:
-        if queue_element.message:
-            queue_element.message = None
-            count += 1
+    count = session.execute(query).rowcount
+    session.commit()
 
     session.commit()
 

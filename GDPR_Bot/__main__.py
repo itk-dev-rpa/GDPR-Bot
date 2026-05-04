@@ -200,5 +200,6 @@ def log_info(orchestrator_connection: OrchestratorConnection, message: str):
     orchestrator_connection.log_info(message)
     time.sleep(0.01)
 
+
 if __name__ == '__main__':
     main()

@@ -16,6 +16,7 @@ The robot takes the following arguments as input in a JSON string:
 - **Delete_Queue_References**: The maximum age of queue elements before their reference is deleted.
 - **Delete_Queue_Data**: The maximum age of queue elements before their data is deleted.
 - **Delete_Queue_Messages**: The maximum age of queue elements before their message is deleted.
+- **Delete_Jobs**: The maximum age of jobs before they're deleted.
 
 All values are given in days.
 If a value is not defined or less than 1 the action is skipped.
@@ -30,6 +31,7 @@ Example JSON:
     "Delete_Queues": 60,
     "Delete_Queue_References": 14,
     "Delete_Queue_Data": 14,
-    "Delete_Queue_Messages": 45
+    "Delete_Queue_Messages": 45,
+    "Delete_Jobs": 60
 }
 ```

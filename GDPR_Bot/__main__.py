@@ -101,6 +101,13 @@ def delete_logs(days: int, session: Session, orchestrator_connection: Orchestrat
 
 
 def delete_jobs(days: int, session: Session, orchestrator_connection: OrchestratorConnection):
+    """Delete all jobs in the database older than the given number of days.
+
+    Args:
+        days: The maximum age of jobs before deletion.
+        session: The sqlalchemy session to perform the action.
+        orchestrator_connection: The connection to Orchestrator.
+    """
     cutoff_date = datetime.today() - timedelta(days=days)
 
     log_info(orchestrator_connection, f"Deleting jobs before: {cutoff_date.date()} ({days} days)")

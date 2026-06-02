@@ -8,6 +8,7 @@ from OpenOrchestrator.orchestrator_connection.connection import OrchestratorConn
 from OpenOrchestrator.database import db_util
 from OpenOrchestrator.database.logs import Log
 from OpenOrchestrator.database.queues import QueueElement
+from OpenOrchestrator.database.jobs import Job
 from sqlalchemy import create_engine, delete, update
 from sqlalchemy.orm import Session
 
@@ -33,6 +34,14 @@ def main():
             delete_logs(days, session, orchestrator_connection)
     else:
         log_info(orchestrator_connection, "Skipping: Delete logs")
+
+    # Delete jobs
+    days = args.get("Delete_Jobs", 0)
+    if days > 0:
+        with Session(engine) as session:
+            delete_jobs(days, session, orchestrator_connection)
+    else:
+        log_info(orchestrator_connection, "Skipping: Delete jobs")
 
     # Delete queue elements
     days = args.get("Delete_Queues", 0)
@@ -89,6 +98,28 @@ def delete_logs(days: int, session: Session, orchestrator_connection: Orchestrat
     session.commit()
 
     log_info(orchestrator_connection, f"Logs deleted: {count}")
+
+
+def delete_jobs(days: int, session: Session, orchestrator_connection: OrchestratorConnection):
+    """Delete all jobs in the database older than the given number of days.
+
+    Args:
+        days: The maximum age of jobs before deletion.
+        session: The sqlalchemy session to perform the action.
+        orchestrator_connection: The connection to Orchestrator.
+    """
+    cutoff_date = datetime.today() - timedelta(days=days)
+
+    log_info(orchestrator_connection, f"Deleting jobs before: {cutoff_date.date()} ({days} days)")
+
+    query = (
+        delete(Job)
+        .where(Job.start_time < cutoff_date)
+    )
+    count = session.execute(query).rowcount
+    session.commit()
+
+    log_info(orchestrator_connection, f"Jobs deleted: {count}")
 
 
 def delete_queue_elements(days: int, session: Session, orchestrator_connection: OrchestratorConnection):
